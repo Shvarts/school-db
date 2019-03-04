@@ -6,7 +6,8 @@ const routes = {
     // '/development': 'Development',
     // '/support': 'Support',
     // '/dashboard': 'Dashboard',
-    '/children-table': 'Таблиця діти'
+    '/children-table': 'Таблиця діти',
+    '/login': 'Login'
     // '/events': 'Events',
     // '/config-form': 'Configuration'
 }
