@@ -39,7 +39,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://school.itc.gov.ua/",
+  "proxy": "http://142.93.97.188/",
   "eslintConfig": {
     "extends": "react-app"
   },
