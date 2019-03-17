@@ -13,12 +13,12 @@ import paginationFactory from 'react-bootstrap-table2-paginator'
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import PopUp from "./PopUp";
 import {connect} from "react-redux";
-// import ReactExport from "react-data-export";
-//
-//
-// const ExcelFile = ReactExport.ExcelFile;
-// const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-// const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+import ReactExport from "react-data-export";
+import API_URL from '../../config';
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 
 class ChildrenTable extends Component {
@@ -51,7 +51,7 @@ class ChildrenTable extends Component {
             }
         } : null;
 
-        axios.get('/api/notes/', params)
+        axios.get(`${API_URL}/api/notes/`, params)
             .then(response => {
                 this.setState({
                     records: response.data
@@ -59,7 +59,7 @@ class ChildrenTable extends Component {
             });
 
         if (isAdmin) {
-            axios.get('/api/schools/')
+            axios.get(`${API_URL}/api/schools/`)
                 .then(response => {
                     const schoolsOptions = response.data.map((school) => {
                         return {
@@ -82,7 +82,7 @@ class ChildrenTable extends Component {
     }
 
     onAdd(data) {
-        axios.post('/api/notes/', data)
+        axios.post(`${API_URL}/api/notes/`, data)
             .then(response => {
                 this.state.records.push(response.data);
                 this.setState({
@@ -94,7 +94,7 @@ class ChildrenTable extends Component {
     onDelete() {
         const data = {ids: this.node.selectionContext.state.selected};
 
-        axios.delete('/api/notes/', {data})
+        axios.delete(`${API_URL}/api/notes/`, {data})
             .then(response => {
                 this.setState({
                     records: this.state.records.filter(function(r) {
@@ -105,11 +105,17 @@ class ChildrenTable extends Component {
     }
 
     onEditBeforeSaveCell(oldValue, newValue, row) {
-        axios.put('/api/notes/', row)
+        axios.put(`${API_URL}/api/notes/`, row)
     }
 
     onDateFilter(filterValue) {
         const years = filterValue.split(/[ ,]+/);
+
+        console.log(this.node && this.node.table.props.data);
+
+        if(!filterValue) {
+            return this.state.records;
+        }
 
         return this.state.records.filter((record) => {
             return years.indexOf(new Date(record.dateOfBirth).getFullYear() + '') > -1;
@@ -117,12 +123,6 @@ class ChildrenTable extends Component {
     }
 
     render() {
-        // const formOfStudySelectOptions = {
-        //     0: 'індивідуальна',
-        //     1: 'індивідуально-групова',
-        //     2: 'колективна'
-        // };
-
         const columns = [{
             dataField: 'fullname',
             text: "Повне Ім'я",
@@ -225,18 +225,19 @@ class ChildrenTable extends Component {
                                 <div style={{display: 'flex'}}>
                                     <PopUp onAdd={this.onAdd}/>
                                     <button className="btn btn-danger btn-xs"
-                                            onClick={this.onDelete}>Delete
+                                            onClick={this.onDelete}>Видалити
                                     </button>
-                                    {/*<ExcelFile element={<Button color="success">Експортувати в XLS</Button>}>*/}
-                                        {/*<ExcelSheet data={this.state.records} name="children">*/}
-                                            {/*<ExcelColumn label="Повне Ім'я" value="fullname"/>*/}
-                                            {/*<ExcelColumn label="Місце проживання" value="locationOfLiving"/>*/}
-                                            {/*<ExcelColumn label="Місце навчання" value="locationOfStudy"/>*/}
-                                            {/*<ExcelColumn label="Стать" value="sex"/>*/}
-                                            {/*<ExcelColumn label="Сцеціальна категорія" value="specialCategory"/>*/}
-                                            {/*<ExcelColumn label="Дата народження" value="dateOfBirth"/>*/}
-                                        {/*</ExcelSheet>*/}
-                                    {/*</ExcelFile>*/}
+                                    <ExcelFile element={<Button color="success">Експортувати в XLS</Button>}>
+                                        <ExcelSheet data={this.node && this.node.table.props.data} name="children">
+                                            <ExcelColumn label="Повне Ім'я" value="fullname"/>
+                                            <ExcelColumn label="Місце проживання" value="locationOfLiving"/>
+                                            <ExcelColumn label="Місце навчання" value="locationOfStudy"/>
+                                            <ExcelColumn label="Стать" value="sex"/>
+                                            <ExcelColumn label="Форма навчання" value="formOfStudy"/>
+                                            <ExcelColumn label="Сцеціальна категорія" value="specialCategory"/>
+                                            <ExcelColumn label="Дата народження" value="dateOfBirth"/>
+                                        </ExcelSheet>
+                                    </ExcelFile>
                                 </div>
                                 <BootstrapTable
                                     ref={ n => this.node = n }

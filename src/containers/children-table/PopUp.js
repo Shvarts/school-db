@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap';
 import axios from "axios";
 import {connect} from "react-redux";
+import API_URL from '../../config';
 
 class PopUp extends React.Component {
     constructor(props) {
@@ -23,7 +24,6 @@ class PopUp extends React.Component {
         this.toggle = this.toggle.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeCheckBox = this.handleChangeCheckBox.bind(this);
-        this.getSchoolOptions = this.getSchoolOptions.bind(this);
     }
 
     componentDidMount() {
@@ -31,11 +31,11 @@ class PopUp extends React.Component {
         const isAdmin = user.isAdmin === 'так';
 
         if (isAdmin) {
-            axios.get('/api/schools/')
+            axios.get(`${API_URL}/api/schools/`)
                 .then(response => {
                     this.setState({
                         locationOfStudy: response.data[0].name,
-                        schoolOptions: response.data
+                        schoolOptions: response.data.map((school, i) => <option key={i}>{school.name}</option>)
                     });
                 });
         } else {
@@ -45,10 +45,6 @@ class PopUp extends React.Component {
                 }]
             })
         }
-    }
-
-    getSchoolOptions() {
-        return this.state.schoolOptions && this.state.schoolOptions.map((school, i) => <option key={i}>{school.name}</option>);
     }
 
     toggle() {
@@ -98,7 +94,7 @@ class PopUp extends React.Component {
                             <FormGroup>
                                 <Label for="locationOfStudy">Місце навчання</Label>
                                 <Input value={this.state.locationOfStudy} onChange={this.handleChange} type="select" name="select" id="locationOfStudy">
-                                    {this.getSchoolOptions()}
+                                    {this.state.schoolOptions}
                                 </Input>
                             </FormGroup>
                             <FormGroup>

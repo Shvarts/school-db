@@ -12,6 +12,7 @@ import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import PopUp from "./PopUp";
 import { registerUser } from '../../actions/authentication';
 import {connect} from "react-redux";
+import API_URL from '../../config';
 
 class Users extends Component {
     constructor(props, context) {
@@ -21,14 +22,14 @@ class Users extends Component {
             modalShow: false
         };
 
-        axios.get('/api/users/')
+        axios.get(`${API_URL}/api/users/`)
             .then(response => {
                 this.setState({
                     records: response.data
                 });
             });
 
-        axios.get('/api/schools/')
+        axios.get(`${API_URL}/api/schools/`)
             .then(response => {
                 const schoolsOptions = response.data.map((school) => {
                     return {
@@ -57,7 +58,7 @@ class Users extends Component {
     }
 
     onAdd(data) {
-        axios.post('/api/users/register', data)
+        axios.post(`${API_URL}/api/users/register`, data)
             .then(res => {
                 this.state.records.push(data);
                 this.setState({records: this.state.records});
@@ -67,7 +68,7 @@ class Users extends Component {
     onDelete() {
         const data = {ids: this.node.selectionContext.state.selected};
 
-        axios.delete('/api/users/', {data})
+        axios.delete(`${API_URL}/api/users/`, {data})
             .then(response => {
                 this.setState({
                     records: this.state.records.filter(function(r) {
@@ -78,7 +79,7 @@ class Users extends Component {
     }
 
     onEditBeforeSaveCell(oldValue, newValue, row) {
-        axios.post('/api/users/update', row);
+        axios.post(`${API_URL}/api/users/update`, row);
     }
 
     render() {
@@ -139,7 +140,7 @@ class Users extends Component {
                                 <div style={{display: 'flex'}}>
                                     <PopUp onAdd={this.onAdd}/>
                                     <button className="btn btn-danger btn-xs"
-                                            onClick={this.onDelete}>Delete
+                                            onClick={this.onDelete}>Видалити
                                     </button>
                                 </div>
                                 <BootstrapTable

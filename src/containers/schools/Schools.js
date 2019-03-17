@@ -11,6 +11,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter'
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import PopUp from "./PopUp";
 import {connect} from "react-redux";
+import API_URL from '../../config';
 
 class Schools extends Component {
     constructor(props, context) {
@@ -34,7 +35,7 @@ class Schools extends Component {
             return;
         }
 
-        axios.get('/api/schools/')
+        axios.get(`${API_URL}/api/schools/`)
             .then(response => {
                 this.setState({
                     records: response.data
@@ -43,7 +44,7 @@ class Schools extends Component {
     }
 
     onAdd(data) {
-        axios.post('/api/schools/', data)
+        axios.post(`${API_URL}/api/schools/`, data)
             .then(response => {
                 this.state.records.push(response.data);
                 this.setState({
@@ -55,7 +56,7 @@ class Schools extends Component {
     onDelete() {
         const data = {ids: this.node.selectionContext.state.selected};
 
-        axios.delete('/api/schools/', {data})
+        axios.delete(`${API_URL}/api/schools/`, {data})
             .then(response => {
                 this.setState({
                     records: this.state.records.filter(function(r) {
@@ -66,7 +67,7 @@ class Schools extends Component {
     }
 
     onEditBeforeSaveCell(oldValue, newValue, row) {
-        axios.put('/api/schools/', row)
+        axios.put(`${API_URL}/api/schools/`, row)
         // .then(response => {
         //     console.log(response);
         // });
@@ -97,7 +98,7 @@ class Schools extends Component {
                                 <div style={{display: 'flex'}}>
                                     <PopUp onAdd={this.onAdd}/>
                                     <button className="btn btn-danger btn-xs"
-                                            onclick={this.onDelete}>Delete
+                                            onClick={this.onDelete}>Видалити
                                     </button>
                                 </div>
                                 <BootstrapTable
